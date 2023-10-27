@@ -1,0 +1,45 @@
+<template>
+	<div class="viewer" id="viewer">
+	</div>
+</template>
+
+<script>
+	import '@photo-sphere-viewer/core/index.css'
+	import { Viewer } from '@photo-sphere-viewer/core'
+	
+	export default {
+		data() {
+			return {
+				
+			}
+		},
+		mounted() {
+			new Promise( _=> {
+				this.init()
+			}).catch( e => {
+				console.log(e)
+			}).then()
+		},
+		methods: {
+			init() {
+				const year = new Date().getFullYear()
+				new Viewer({
+				  container: 'viewer',
+				  panorama: '/static/sphere/sphere.jpg',
+				  caption: `新疆云智润科技有限公司 <b> &copy; ${year}</b>`,
+				  loadingImg: '/static/sphere/loader.gif',
+				  touchmoveTwoFingers: true,
+				  mousewheelCtrlKey: true
+				})
+			}
+		}
+	}
+</script>
+
+<style>
+#viewer {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+</style>

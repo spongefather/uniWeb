@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>全景浏览</title>
+	<link rel="stylesheet" href="css/index.css" />
+	<style type="text/css">
+		html,body,canvas,img,#viewer {
+			width: 100%;
+			height: 100%;
+			margin: 0;
+			padding: 0;
+			border: 0;
+			display: block;
+		}
+		#viewer {
+			width: 100%;
+			height: 100%;
+		}
+		div{
+			padding: 0;
+			margin: 0;
+			border: 0;
+		}
+	</style>
+</head>
+<body>
+	<script src="js/uni-webview-js@0.0.3.js"></script>
+	<script src="js/three.min.js"></script>
+	<script src="js/index.js"></script>
+	<div id="viewer">
+		
+	</div>
+	<script>
+		window.onload = function (evt) {
+			console.log('start to render ... ')
+			const year = new Date().getFullYear()
+			const p = Math.ceil(Math.random()*7)
+			new PhotoSphereViewer.Viewer({
+			  container: 'viewer',
+			  // panorama: '/static/sphere/sphere.jpg',
+			  // panorama: 'img/sphere.jpg', three js 不支持 file:// 协议，需要自定义 loader ？
+			  // panorama: 'https://photo-sphere-viewer-data.netlify.app/assets/sphere.jpg',
+			  panorama:`http://192.168.0.193:9000/demos/key-biscayne-${p}.jpg`,
+			  caption: `spongeFather@Github <b> &copy; ${year}</b>`,
+			  // loadingImg: '/static/sphere/loader.gif',
+			  loadingImg: 'img/loader.gif', // if is  /hybrid/html/img/loader.gif
+			  // loadingImg: 'https://photo-sphere-viewer-data.netlify.app/assets/loader.gif',
+			  touchmoveTwoFingers: false,
+			  mousewheelCtrlKey: true
+			})
+		}
+		
+		document.addEventListener('UniAppJSBridgeReady', 
+			function() {
+		        uni.postMessage({
+		            data: {
+		                action: 'message'
+		            }
+		        });
+			}
+		)
+		
+		function print(str) {
+			uni.postMessage({
+			    data: {
+			        action: 'webview' + str
+			    }
+			})
+			return "webview message"
+		}
+	</script>
+</body>
+</html>

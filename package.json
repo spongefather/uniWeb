@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@photo-sphere-viewer/core": "^5.4.2"
+  }
+}

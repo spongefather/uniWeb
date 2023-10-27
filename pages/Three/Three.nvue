@@ -1,0 +1,113 @@
+<template>
+	<view class="page-container" :style="pageStyle">
+		<div class="p-head" style="width: 100%;">
+			<text> some thing to display .....</text>
+		</div>
+		<div class="p-body" :style="pBodyStyle">
+			<web-view
+				ref="browe"
+				v-if="ready"
+				:fullscreen="fullscreen"
+				:src="baseUrl"
+				:style="baseStyle"
+				id="wvcontainer"
+				class="wvcontainer"
+				@onPostMessage="psvMessage"
+			></web-view>
+			<!-- :webview-styles="baseStyle" -->
+		</div>
+		
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				ready: false,
+				fullscreen: false,
+				pBodyStyle: {
+					height: '100%',
+					width: '100%'
+				},
+				pageStyle: {
+					height: '100%',
+					width: '100%'
+				},
+				baseStyle: {
+					width: '100px' ,
+					height: '100px'
+				},
+				baseUrl: '/hybrid/html/sphere.html'
+			}
+		},
+		mounted() {
+			this.loadView()
+		},
+		onLoad(option) {
+			this.baseUrl = option.url
+		},
+		methods: {
+			loadView() {
+				let that = this
+				uni.getSystemInfo({
+					success: (res) => that.changeState(res) ,
+				})
+			},
+			psvMessage(data) {
+				console.log(data.detail.data[0]) // is array
+				if(data.detail.data[0].action == 'message')
+				this.runWebView()
+			},
+			changeState(res) {
+				// console.log(res)
+				const size = res.windowHeight
+				const width = res.windowWidth
+				const pageHeight = size
+				const bodyHeight = pageHeight - 200
+				this.pageStyle = {
+					height: pageHeight + 'px',
+					width: '100%'
+				}
+				this.pBodyStyle = {
+					height: bodyHeight + 'px',
+					width: '100%'
+				}
+				this.baseStyle = {
+					height: `${bodyHeight - 0}px`,
+					width: `${width - 0}px`
+					// height: '100px',
+					// width: '100px'
+				}
+				this.ready = true
+			},
+			runWebView() {
+				const name = this.$refs.browe.evalJs('print("webview")')
+				console.log(name)
+			}
+		}
+	}
+</script>
+
+<style scoped="false">
+.page-container {
+	display: flex;
+	flex: 1;
+	width: 100%;
+}
+.p-head {
+	width: 100%;
+	height: 200px;
+	background-color: antiquewhite;
+}
+.p-body {
+	width: 100%;
+	background-color: aliceblue;
+}
+#wvcontainer {
+	border: 0;
+}
+iframe#wvcontainer {
+	border: 0;
+}
+</style>

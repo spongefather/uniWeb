@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Three 画图</title>
+	<style type="text/css">
+		html,body,canvas,img,#viewer {
+			width: 100%;
+			height: 100%;
+			margin: 0;
+			padding: 0;
+			border: 0;
+			display: block;
+		}
+		#view {
+			width: 100%;
+			height: 100%;
+		}
+		div{
+			padding: 0;
+			margin: 0;
+			border: 0;
+		}
+	</style>
+</head>
+<body>
+	<script src="js/uni-webview-js@0.0.3.js"></script>
+	<script src="js/three.min.js"></script>
+	<div id="view">
+		<canvas id="threecanv"></canvas>
+	</div>
+	<script>
+		var end = false
+		window.onload = function (evt) {
+			const ele = document.getElementById('view')
+			const width = ele?.clientWidth ?? 1
+			const height = ele?.clientHeight ?? 1
+			scene = new THREE.Scene()
+			camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000)
+			const cv = document.querySelector('#threecanv')
+			render = new THREE.WebGLRenderer({
+			  canvas: cv,
+			  antialias: true,
+			  alpha: true,
+			  precision: 'highp',
+			  depth: true,
+			  preserveDrawingBuffer: true,
+			  logarithmicDepthBuffer: true
+			})
+			render.setSize(width, height)
+			// const controls = new THREE . OrbitControls( camera, cv )
+			const geometry = new THREE.BoxGeometry(100, 100, 100)
+			const materials = [
+			  new THREE.MeshBasicMaterial({ color: 0x00bf22 }),
+			  new THREE.MeshBasicMaterial({ color: 0xd32200 }),
+			  new THREE.MeshBasicMaterial({ color: 0xd2ac22 }),
+			  new THREE.MeshBasicMaterial({ color: 0x22cda6 }),
+			  new THREE.MeshBasicMaterial({ color: 0xb23410 }),
+			  new THREE.MeshBasicMaterial({ color: 0x01bc56 }),
+			]
+			const cube = new THREE.Mesh(geometry, materials)
+			scene.add(cube)
+			camera.position.x = 10
+			camera.position.y = 10
+			camera.position.z = 160
+			// controls.autoRotate = true
+			// ...other
+			// controls.update()
+			const rende = function () {
+			  if (end) {
+				cancelAnimationFrame(frame)
+				return
+			  }
+			  frame = requestAnimationFrame(rende)
+			  // controls.update()
+			  cube.rotation.x += 0.01
+			  cube.rotation.y += 0.01
+			  render.render(scene, camera)
+			}
+			end = false
+			rende()
+		}
+		
+		document.addEventListener('UniAppJSBridgeReady', 
+			function() {
+		        uni.postMessage({
+		            data: {
+		                action: 'message'
+		            }
+		        });
+			}
+		)
+		
+		function print(str) {
+			uni.postMessage({
+			    data: {
+			        action: 'webview' + str
+			    }
+			})
+			return "webview message"
+		}
+	</script>
+</body>
+</html>
