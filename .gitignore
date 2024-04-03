@@ -2,3 +2,6 @@ unpackage
 node_modules
 .vite
 .hbuilderx
+uni_modules
+
+.vscode

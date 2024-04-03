@@ -11,11 +11,54 @@
             "path" : "pages/Three/Three",
             "style" :                                                                                    
             {
-                "navigationBarTitleText": "全景加载",
+                "navigationBarTitleText": "3D浏览器",
                 "enablePullDownRefresh": false
             }
         }
-    ],
+    ,{
+    "path": "uni_modules/uni-push-admin/pages/extra/extra",
+    "style": {
+        "h5": {
+            "titleNView": {
+                "type": "transparent"
+            }
+        },
+        "navigationBarTitleText": "push-admin",
+        "navigationStyle": "default"
+    }
+}
+,{
+    "path": "uni_modules/uni-push-admin/pages/log/list",
+    "style": {
+        "h5": {
+            "titleNView": {
+                "type": "transparent"
+            }
+        },
+        "navigationBarTitleText": "推送记录",
+        "navigationStyle": "default"
+    }
+}
+,{
+    "path": "uni_modules/uni-push-admin/pages/log/detail",
+    "style": {
+        "navigationBarTitleText": "推送详情",
+        "navigationStyle": "default"
+    }
+}
+,{
+    "path": "uni_modules/uni-push-admin/pages/sendMessage/sendMessage",
+    "style": {
+        "h5": {
+            "titleNView": {
+                "type": "transparent"
+            }
+        },
+        "navigationBarTitleText": "消息推送",
+        "navigationStyle": "default"
+    }
+}
+],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",

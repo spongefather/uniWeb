@@ -1,220 +1,266 @@
 <!DOCTYPE html>
 <html lang="zh">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Google 模型</title>
-	<style type="text/css">
-		html,body,canvas,img,#viewer {
-			width: 100%;
-			height: 100%;
-			margin: 0;
-			padding: 0;
-			border: 0;
-			display: block;
-		}
-		#viewer {
-			width: 100%;
-			height: 100%;
-		}
-		#dcanve {
-			display: block;
-		}
-		div{
-			padding: 0;
-			margin: 0;
-			border: 0;
-		}
-	</style>
-</head>
-<body>
-	<script src="js/uni-webview-js@0.0.3.js"></script>
-	<script src="js/filament.js"></script>
-	<script src="js/gl-matrix-min.js"></script>
-	<script src="js/gltumble.min.js"></script>
-	<div id="viewer">
-		<canvas id="dcanve"></canvas>
-	</div>
-	<script>
-		function start() {
-			init(['model/triangle.filamat'], () => {
-				var canvas = document.getElementById("dcanve")
-			      var engine = Filament.Engine.create(canvas, {})
-			      var scene = engine.createScene()
-			      var entity = Filament.EntityManager.get().create()
-			      scene.addEntity(entity)
-			      const TRIANGLE_POSITIONS = new Float32Array([
-			        1, 0,
-			        Math.cos(Math.PI * 2 / 3), Math.sin(Math.PI * 2 / 3),
-			        Math.cos(Math.PI * 4 / 3), Math.sin(Math.PI * 4 / 3)
-			      ])
-			      const TRIANGLE_COLORS = new Uint32Array([0xffff0000, 0xff00ff00, 0xff0000ff])
-			      var vb = Filament.VertexBuffer.Builder()
-			        .vertexCount(3)
-			        .bufferCount(2)
-			        .attribute(Filament.VertexAttribute.POSITION, 0, Filament.VertexBuffer$AttributeType.FLOAT2, 0, 8)
-			        .attribute(Filament.VertexAttribute.COLOR, 1, Filament.VertexBuffer$AttributeType.UBYTE4, 0, 4)
-			        .normalized(Filament.VertexAttribute.COLOR)
-			        .build(engine)
-			
-			      vb.setBufferAt(engine, 0, TRIANGLE_POSITIONS)
-			      vb.setBufferAt(engine, 1, TRIANGLE_COLORS)
-			
-			      var ib = Filament.IndexBuffer.Builder()
-			        .indexCount(3)
-			        .bufferType(Filament.IndexBuffer$IndexType.USHORT)
-			        .build(engine)
-			
-			      ib.setBuffer(engine, new Uint16Array([0, 1, 2]))
-			
-				  var mat = engine.createMaterial('model/triangle.filamat');
-				  var matinst = mat.getDefaultInstance();
-				  
-			      Filament.RenderableManager.Builder(1)
-			        .boundingBox({ center: [-1, -1, -1], halfExtent: [1, 1, 1] })
-			        .material(0, matinst)
-			        .geometry(0, Filament.RenderableManager$PrimitiveType.TRIANGLES, vb, ib)
-			        .build(engine, entity)
-			
-			      var swapChain = engine.createSwapChain()
-			      var renderer = engine.createRenderer()
-			      var camera = engine.createCamera(Filament.EntityManager.get().create())
-			
-			      var view = engine.createView()
-			      // this.view.setSampleCount(4)
-			      // view.setMultiSampleAntiAliasingOptions({ sampleCount: 4 })
-			      view.setCamera(camera)
-			      view.setScene(scene)
-			
-			      renderer.setClearOptions({ clearColor: [0.0, 0.1, 0.2, 1.0], clear: true })
-			
-			function resize () {
-			    // const dpr = window.devicePixelRatio
-			    const width = canvas.width = window.innerWidth 
-			    const height = canvas.height = window.innerHeight
-			    view.setViewport([0, 0, width, height])
-			    const aspect = width / height
-			    camera.setProjection(Filament.Camera$Projection.ORTHO, -aspect, aspect, -1, 1, 0, 1)
-				console.log('window init or resized ...')
-			  }
-			  
-			  function render() {
-			  	const radians = Date.now() / 1000
-			  	  const transform = mat4.fromRotation(mat4.create(), radians, [0, 0, -1])
-			  	  const tcm = engine.getTransformManager()
-			  	  const inst = tcm.getInstance(entity)
-			  	  // tcm.setTransform(inst, this.trackball.getMatrix())
-			  	  tcm.setTransform(inst, transform)
-			  	  inst.delete()
-			  	  renderer.render(swapChain, view)
-			  	  var req = window.requestAnimationFrame(render)
-			  }
-			      resize ()
-			      requestAnimationFrame(render)
-				  // window.addEventListener("resize",resize)
-			    })
-		}
-		
-		
-		function fetchthis (url,a,b) {
-			 return new Promise((resolve, reject) => {
-				let requestObj;
-				if (window.XMLHttpRequest) {
-					requestObj = new XMLHttpRequest();
-				} else {
-					requestObj = new ActiveXObject;
-				}
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Google 模型</title>
+		<style type="text/css">
+			html,
+			body,
+			canvas,
+			img,
+			#viewer {
+				width: 100%;
+				height: 100%;
+				margin: 0;
+				padding: 0;
+				border: 0;
+				display: block;
+			}
 
-				requestObj.responseType = 'arraybuffer'
-				requestObj.open('POST', url, true);
-				// requestObj.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-				requestObj.send();
-	
-				requestObj.onreadystatechange = () => {
-					if (requestObj.readyState == 4) {
-						if (requestObj.status == 200) {
-							
-							requestObj.arrayBuffer =  function() {
-								return new Promise((resolve, reject) => {
-									// console.log(requestObj.response)
-									resolve(requestObj.response)
-								})
+			#viewer {
+				width: 100%;
+				height: 100%;
+			}
+
+			#dcanve {
+				display: block;
+			}
+
+			div {
+				padding: 0;
+				margin: 0;
+				border: 0;
+			}
+		</style>
+	</head>
+	<body>
+		<script src="js/uni-webview-js@0.0.3.js"></script>
+		<script src="js/filament.js"></script>
+		<script src="js/gl-matrix-min.js"></script>
+		<script src="js/gltumble.min.js"></script>
+		<div id="viewer">
+			<canvas id="dcanve"></canvas>
+		</div>
+		<script>
+			function start() {
+				init(['model/triangle.filamat'], () => {
+					const canvas = document.getElementById("dcanve")
+					console.log(canvas)
+					const engine = Filament.Engine.create(canvas, {})
+					const scene = engine.createScene()
+					const entity = Filament.EntityManager.get().create()
+					scene.addEntity(entity)
+					const TRIANGLE_POSITIONS = new Float32Array([
+						1, 0,
+						Math.cos(Math.PI * 2 / 3), Math.sin(Math.PI * 2 / 3),
+						Math.cos(Math.PI * 4 / 3), Math.sin(Math.PI * 4 / 3)
+					])
+					const TRIANGLE_COLORS = new Uint32Array([0xffff0000, 0xff00ff00, 0xff0000ff])
+					const vb = Filament.VertexBuffer.Builder()
+						.vertexCount(3)
+						.bufferCount(2)
+						.attribute(Filament.VertexAttribute.POSITION, 0, Filament.VertexBuffer$AttributeType.FLOAT2, 0,
+							8)
+						.attribute(Filament.VertexAttribute.COLOR, 1, Filament.VertexBuffer$AttributeType.UBYTE4, 0, 4)
+						.normalized(Filament.VertexAttribute.COLOR)
+						.build(engine)
+
+					vb.setBufferAt(engine, 0, TRIANGLE_POSITIONS)
+					vb.setBufferAt(engine, 1, TRIANGLE_COLORS)
+
+					const ib = Filament.IndexBuffer.Builder()
+						.indexCount(3)
+						.bufferType(Filament.IndexBuffer$IndexType.USHORT)
+						.build(engine)
+
+					ib.setBuffer(engine, new Uint16Array([0, 1, 2]))
+
+					const mat = engine.createMaterial('model/triangle.filamat');
+					const matinst = mat.getDefaultInstance();
+
+					Filament.RenderableManager.Builder(1)
+						.boundingBox({
+							center: [-1, -1, -1],
+							halfExtent: [1, 1, 1]
+						})
+						.material(0, matinst)
+						.geometry(0, Filament.RenderableManager$PrimitiveType.TRIANGLES, vb, ib)
+						.build(engine, entity)
+
+					const swapChain = engine.createSwapChain()
+					const renderer = engine.createRenderer()
+					const camera = engine.createCamera(Filament.EntityManager.get().create())
+
+					const view = engine.createView()
+					// this.view.setSampleCount(4)
+					// view.setMultiSampleAntiAliasingOptions({ sampleCount: 4 })
+					view.setCamera(camera)
+					view.setScene(scene)
+
+					renderer.setClearOptions({
+						clearColor: [0.0, 0.1, 0.2, 1.0],
+						clear: true
+					})
+
+					function resize() {
+						// const dpr = window.devicePixelRatio
+						const width = canvas.width = window.innerWidth
+						const height = canvas.height = window.innerHeight
+						view.setViewport([0, 0, width, height])
+						const aspect = width / height
+						camera.setProjection(Filament.Camera$Projection.ORTHO, -aspect, aspect, -1, 1, 0, 1)
+						console.log('window init or resized ...')
+					}
+
+					function render() {
+						const radians = Date.now() / 1000
+						const transform = mat4.fromRotation(mat4.create(), radians, [0, 0, -1])
+						const tcm = engine.getTransformManager()
+						const inst = tcm.getInstance(entity)
+						// tcm.setTransform(inst, this.trackball.getMatrix())
+						tcm.setTransform(inst, transform)
+						inst.delete()
+						renderer.render(swapChain, view)
+						var req = window.requestAnimationFrame(render)
+					}
+					resize()
+					requestAnimationFrame(render)
+					// window.addEventListener("resize",resize)
+				})
+			}
+
+
+			function fetchthis(url, a, b) {
+				return new Promise((resolve, reject) => {
+					let requestObj;
+					if (window.XMLHttpRequest) {
+						requestObj = new XMLHttpRequest();
+					} else {
+						requestObj = new ActiveXObject;
+					}
+
+					requestObj.responseType = 'arraybuffer'
+					requestObj.open('POST', url, true);
+					// requestObj.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+					requestObj.send();
+
+					requestObj.onreadystatechange = () => {
+						if (requestObj.readyState == 4) {
+							if (requestObj.status == 200) {
+
+								// arrayBuffer
+								requestObj.arrayBuffer = function() {
+									return new Promise((resolve, reject) => {
+										// console.log(requestObj.response)
+										resolve(requestObj.response)
+									})
+								}
+								console.log(requestObj)
+								requestObj.ok = true
+								resolve(requestObj)
+							} else {
+								reject(requestObj)
 							}
-							
-							requestObj.ok = true
-							resolve(requestObj)
-						} else {
-							reject(requestObj)
 						}
 					}
-				}
-			})
-		}
-		
-		
-		function init(assets, onready) {
-			window.fetch = fetchthis
-			 window.glMatrix = glMatrix
-			  window.vec4 = glMatrix.vec4
-			  window.mat3 = glMatrix.mat3
-			  window.mat4 = glMatrix.mat4
-			const config = {
-				locateFile: () => 'wasm/filament.wasm',
-				noExitRuntime: false,
-				monitorRunDependencies: (id) => {
-				}
+				})
 			}
-			  if (onready) {
-			    Filament.onReadyListeners.push(onready)
-			  }
-			  if (Filament.initialized) {
-			    console.assert(!assets || assets.length === 0, 'Assets can be specified only with the first call to init.')
-			    return
-			  }
-			  Filament.initialized = true
-			  Filament.assets = {}
-			  if (typeof glMatrix !== 'undefined') {
-			    Filament.loadMathExtensions()
-			  }
-			  let remainingTasks = 1 + assets.length
-			  const taskFinished = () => {
-			    if (--remainingTasks === 0) {
-			      for (const callback of Filament.onReadyListeners) {
-			        callback()
-			      }
-			      Filament.isReady = true
-			    }
-			  }
+
+
+			function init(assets, onready) {
+				window.fetch = fetchthis
+				window.glMatrix = glMatrix
+				window.vec4 = glMatrix.vec4
+				window.mat3 = glMatrix.mat3
+				window.mat4 = glMatrix.mat4
+				
+				  Filament.View = () => {
+					//from wasm
+				  }
+				
+				const config = {
+					locateFile: () => 'wasm/filament.wasm',
+					// wasmBinary
+					noExitRuntime: false,
+					monitorRunDependencies: (id) => {}
+				}
+				
+				if (onready) {
+					Filament.onReadyListeners.push(onready)
+				}
+				if (Filament.initialized) {
+					console.assert(!assets || assets.length === 0, 'Assets can be specified only with the first call to init.')
+					return
+				}
+				Filament.initialized = true
+				Filament.assets = {}
+				if (typeof glMatrix !== 'undefined') {
+					Filament.loadMathExtensions()
+				}
+				let remainingTasks = 1 + assets.length
+				const taskFinished = () => {
+					if (--remainingTasks === 0) {
+						for (const callback of Filament.onReadyListeners) {
+							callback()
+						}
+						Filament.isReady = true
+					}
+				}
+
+				Filament.fetch(assets, null, taskFinished)
+				Filament(config).then(m => {
+					Filament = Object.assign(Filament, m)
+					Filament.loadClassExtensions()
+					taskFinished()
+				}).catch(e => {
+					console.log(e)
+				})
+			}
+
+			document.addEventListener('UniAppJSBridgeReady',
+				function() {
+					uni.postMessage({
+						data: {
+							action: 'message'
+						}
+					});
+					start();
+				}
+			)
 			
-			  Filament.fetch(assets, null, taskFinished)
-			  Filament(config).then(m => {
-			    Filament = Object.assign(Filament, m)
-			    Filament.loadClassExtensions()
-			    taskFinished()
-			  }).catch( e => {
-			    console.log(e)
-			  })
-		}
-		
-		document.addEventListener('UniAppJSBridgeReady',
-			function() {
-		        uni.postMessage({
-		            data: {
-		                action: 'message'
-		            }
-		        });
-				start();
+			async function wasm(config) {
+				return new Promise((res,rej) => {
+					const url = 'wasm/filament.wasm'
+					const request = new XMLHttpRequest()
+					
+					request.responseType = 'arraybuffer'
+					request.open('POST', url, true);
+					request.send()
+					
+					request.onreadystatechange = () => {
+						if (request.readyState == 4) {
+							if (request.status == 200) {
+								config.wasmBinary = request.response
+								res(request)
+							}else {
+								rej(request)
+							}
+						}else {
+							rej(request)
+						}
+					}
+				})
 			}
-		)
-		
-		function print(str) {
-			uni.postMessage({
-			    data: {
-			        action: 'webview' + str
-			    }
-			})
-			return "webview message"
-		}
-	</script>
-</body>
+
+			function print(str) {
+				uni.postMessage({
+					data: {
+						action: 'webview' + str
+					}
+				})
+				return "webview message"
+			}
+		</script>
+	</body>
 </html>

@@ -24,10 +24,10 @@
 			<view id="viewer"></view>
 		</view> -->
 		<!-- <view class="psv-container"> -->
-			<!-- <view class="block-container">
+		<!-- <view class="block-container">
 				<view-panel ref="viewer"></view-panel>
 			</view> -->
-			<!-- <view ref="frameContainer" class="frame-container">
+		<!-- <view ref="frameContainer" class="frame-container">
 				<web-view v-if="ready" :fullscreen="fullscreen" :webview-styles="styleContainer" id="viewer" class="viewer" src="/hybrid/html/sphere.html"></web-view>
 			</view> -->
 		<!-- </view> -->
@@ -38,7 +38,7 @@
 	// import '@photo-sphere-viewer/core/index.css'
 	// import { Viewer } from '@photo-sphere-viewer/core'
 	// import ViewPanel from '@/component/PsvPanel/PsvPanel.nvue'
-	
+
 	export default {
 		// components: {
 		// 	ViewPanel
@@ -69,12 +69,12 @@
 			init() {
 				const year = new Date().getFullYear()
 				new Viewer({
-				  container: 'viewer',
-				  panorama: '/static/sphere/sphere.jpg',
-				  caption: `新疆云智润科技有限公司 <b> &copy; ${year}</b>`,
-				  loadingImg: '/static/sphere/loader.gif',
-				  touchmoveTwoFingers: true,
-				  mousewheelCtrlKey: true
+					container: 'viewer',
+					panorama: '/static/sphere/sphere.jpg',
+					caption: `新疆云智润科技有限公司 <b> &copy; ${year}</b>`,
+					loadingImg: '/static/sphere/loader.gif',
+					touchmoveTwoFingers: true,
+					mousewheelCtrlKey: true
 				})
 			},
 			loadView() {
@@ -83,7 +83,7 @@
 					height: '400px'
 				}
 				this.ready = true
-				
+
 				// const _this = this
 				// function change() {
 				// 	setTimeout(change,5000)
@@ -100,7 +100,7 @@
 			menuTab() {
 				console.log('press long time.')
 			}
- 		}
+		}
 	}
 </script>
 
@@ -113,7 +113,7 @@
 		justify-content: center;
 		width: 100%;
 	}
-	
+
 	.menus {
 		flex: 1;
 		display: flex;
@@ -122,7 +122,7 @@
 		justify-content: center;
 		width: 100%;
 	}
-	
+
 	.menu-item {
 		display: block;
 		height: 30px;
@@ -131,7 +131,7 @@
 		border-bottom: #8f8f94 2px solid;
 		text-align: center;
 	}
-	
+
 	.text-item {
 		font-size: 24px;
 		color: darkblue;
@@ -155,7 +155,7 @@
 		font-size: 36rpx;
 		color: #8f8f94;
 	}
-	
+
 	.psv-container {
 		display: flex;
 		flex-direction: column;
@@ -163,20 +163,21 @@
 		justify-content: center;
 		width: 100%;
 	}
-	
+
 	.frame-container {
 		display: flex;
 		flex: 1 1 auto;
 		width: 100%;
 		height: 400px;
 	}
-	
-	 #viewer {
+
+	#viewer {
 		border: 0;
 		margin: 0;
 		padding: 0;
 		flex: 1;
 	}
+
 	.block-container {
 		display: block;
 		height: 400px;
